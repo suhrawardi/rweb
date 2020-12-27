@@ -688,6 +688,7 @@ dependencies = [
  "futures",
  "futures-util",
  "hyper",
+ "log",
  "pretty_env_logger",
  "serde_json",
  "tokio",

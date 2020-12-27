@@ -16,6 +16,9 @@ use hyper::service::{make_service_fn, service_fn};
 use tokio::fs::File;
 use tokio_util::codec::{BytesCodec, FramedRead};
 
+extern crate pretty_env_logger;
+#[macro_use] extern crate log;
+
 type GenericError = Box<dyn std::error::Error + Send + Sync>;
 type Result<T> = std::result::Result<T, GenericError>;
 
@@ -39,7 +42,7 @@ pub async fn main() -> Result<()> {
         }
     });
     let server = Server::bind(&addr).serve(make_service);
-    println!("Listening on http://{}", addr);
+    debug!("Listening on http://{}", addr);
     server.await?;
     Ok(())
 }
