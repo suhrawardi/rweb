@@ -54,6 +54,9 @@ async fn req_handler(
         (&Method::GET, "/") | (&Method::GET, "/index.html") => {
             simple_file_send(INDEX).await
         },
+        (&Method::GET, "/test.html") => client_req_resp(&client).await,
+        (&Method::POST, "/json_api") => api_post_resp(req).await,
+        (&Method::GET, "/json_api") => api_get_resp().await,
         (&Method::GET, "/no_file.html") => {
             simple_file_send("this_file_should_not_exist.html").await
         }
@@ -61,11 +64,16 @@ async fn req_handler(
     }
 }
 
-fn not_found() -> Response<Body> {
-    Response::builder()
-        .status(StatusCode::NOT_FOUND)
-        .body(NOTFOUND.into())
-        .unwrap()
+async fn client_req_resp(client: &Client<HttpConnector>) -> Result<Response<Body>> {
+    Ok(not_found())
+}
+
+async fn api_post_resp(req: Request<Body>) -> Result<Response<Body>> {
+    Ok(not_found())
+}
+
+async fn api_get_resp() -> Result<Response<Body>> {
+    Ok(not_found())
 }
 
 async fn simple_file_send(filename: &str) -> Result<Response<Body>> {
@@ -75,4 +83,11 @@ async fn simple_file_send(filename: &str) -> Result<Response<Body>> {
         return Ok(Response::new(body));
     }
     Ok(not_found())
+}
+
+fn not_found() -> Response<Body> {
+    Response::builder()
+        .status(StatusCode::NOT_FOUND)
+        .body(NOTFOUND.into())
+        .unwrap()
 }
