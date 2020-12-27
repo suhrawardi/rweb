@@ -1,4 +1,4 @@
-use std::net::SocketAddr;
+use dotenv::dotenv;
 use futures_util::{stream, StreamExt};
 use hyper::{
     header,
@@ -13,6 +13,7 @@ use hyper::{
 use hyper::body::Buf;
 use hyper::client::HttpConnector;
 use hyper::service::{make_service_fn, service_fn};
+use std::env;
 use tokio::fs::File;
 use tokio_util::codec::{BytesCodec, FramedRead};
 
@@ -30,8 +31,12 @@ static URL: &str = "http://127.0.0.1:3000/json_api";
 
 #[tokio::main]
 pub async fn main() -> Result<()> {
+    dotenv().ok();
     pretty_env_logger::init();
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let addr = env::var("ADDRESS")
+        .unwrap_or_else(|_| "127.0.0.1:3000".into())
+        .parse()
+        .expect("Can't parse ADDRESS variable");
     let client = Client::new();
     let make_service = make_service_fn(move |_conn| {
         let client = client.clone();
